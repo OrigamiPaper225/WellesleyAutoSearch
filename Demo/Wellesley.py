@@ -74,7 +74,8 @@ def startSearch():
     global copyItem
     global title
 
-    data = pandas.read_csv('/Users/jamesloh/PycharmProjects/WellesleyAutoSearch/datasets/data1.csv')
+    #data = pandas.read_csv('/Users/jamesloh/PycharmProjects/WellesleyAutoSearch/datasets/data1.csv')
+    data = pandas.read_csv('~/datasets/data1.csv')
     names = data.loc[:, "Name "]
 
     def search_item(search_query):
