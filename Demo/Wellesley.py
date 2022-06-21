@@ -1,12 +1,12 @@
-# Remaining Tasks:
-# Enable user to enter input to change where search counter starts from
-# This can be in a separate tab
-# Enable user to possibly update options, howerbver, that is hard
-
+# Possibly try and implement scroll, but not that needed
+import sys
 import pandas
 import webbrowser
-import itertools
+# import itertools
 import pyperclip
+import openpyxl
+from openpyxl import load_workbook
+from openpyxl.styles import Font
 # from selenium import webdriver
 # from selenium.webdriver.common.action_chains import ActionChains
 # from selenium.webdriver.support import expected_conditions as EC
@@ -25,7 +25,6 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QDialogButtonBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QObject
-import sys
 
 
 def nameStatus():
@@ -38,7 +37,10 @@ def nameStatus():
 
 def companyNameStatus():
     try:
+        global companyBefore
+        companyBefore = copyItem
         companyMsg.setText(copyItem)
+
     except:
         companyMsg.setText('Empty cell, skip to next')
         print('Empty cell, skip to next')
@@ -46,6 +48,8 @@ def companyNameStatus():
 
 def job():
     try:
+        global titleBefore
+        titleBefore = title
         jobMsg.setText(title)
         companyMsg.setText(copyItem)
     except:
@@ -66,16 +70,29 @@ def counter():
 count = 0
 
 
-
 def startSearch():
     global count
-
     global name
     global copyItem
     global title
+    global companyBefore
+    global titleBefore
+    global filepath
+    filepath = '/Users/jamesloh/PycharmProjects/WellesleyAutoSearch/datasets/data3.xlsx'
+    # filepath = r'C:\WellesleyAutoSearch-Wellesley\datasets\data3.csv'
+    # filepath = '/Users/jamesloh/PycharmProjects/SeleniumTest/datasets/data2.csv'
+    # filepath = '~/datasets/data1.csv'
+    # data = pandas.read_csv('/Users/jamesloh/PycharmProjects/WellesleyAutoSearch/datasets/data1.csv')
+    # data = pandas.read_csv('~/datasets/data1.csv')
+    global data
+    # data = pandas.read_csv(filepath)
+    data = pandas.read_excel(filepath)
+    global wb
+    wb = openpyxl.load_workbook(filepath)
+    global sheet_obj
+    sheet_obj = wb.active
 
-    #data = pandas.read_csv('/Users/jamesloh/PycharmProjects/WellesleyAutoSearch/datasets/data1.csv')
-    data = pandas.read_csv('~/datasets/data1.csv')
+
     names = data.loc[:, "Name "]
 
     def search_item(search_query):
@@ -84,14 +101,7 @@ def startSearch():
 
     name = names[count]
 
-    def iterate():
-        print('Name:')
-        print(name)
 
-        print('Count out of 2100:')
-        print(count)
-        print(title)
-        search_item(name)
 
     # Trying to scroll down to experience page
     # def scroll():
@@ -101,8 +111,21 @@ def startSearch():
     #     driver.execute_script("window.scrollTo(0, document.body.scrollHeight/2);")
     # for name in names:
     # starts here
+    global companyName
     companyName = data.loc[count, 'Company']
     title = data.loc[count, 'Title']
+
+
+    def iterate():
+        print('Name:')
+        print(name)
+
+        print('Count out of 2100:')
+        print(count)
+        print(title)
+        search_item(name)
+        global companyDetector
+
     # if pandas.isnull(copyItem) and pandas.isnull(data.loc[count, 'Name ']):
     # if pandas.isnull(data.loc[:, 'Name ']): # Tried making it skip over nan
     #     # print('Count out of 2100:')
@@ -160,9 +183,9 @@ def startSearch():
 
 app = QApplication(sys.argv)
 window = QWidget()
-window.setStyleSheet("background-color:lightgrey;")
+# window.setStyleSheet("background-color:lightgrey;")
 window.setWindowTitle('Wellesley LinkedIn Searcher')
-window.setFixedSize(300, 350)
+window.setFixedSize(300, 450)
 # layout = QVBoxLayout()
 
 btns = QDialogButtonBox()
@@ -180,11 +203,23 @@ formLayout = QFormLayout()
 formLayout.addWidget(btn)
 btn.setFixedSize(150, 25)
 
+# startAt = QLineEdit()
+# nameMsg = QLabel('')
+# companyMsg = QLabel('')
+# jobMsg = QLabel('')
+# countMsg = QLabel('')
+
+companyColumn = QLineEdit()
+titleColumn = QLineEdit()
+
 startAt = QLineEdit()
 nameMsg = QLabel('')
-companyMsg = QLabel('')
-jobMsg = QLabel('')
+companyMsg = QLineEdit('')
+jobMsg = QLineEdit('')
 countMsg = QLabel('')
+
+formLayout.addWidget(companyColumn)
+formLayout.addWidget(titleColumn)
 
 formLayout.addWidget(startAt)
 formLayout.addWidget(nameMsg)
@@ -192,6 +227,19 @@ formLayout.addWidget(companyMsg)
 formLayout.addWidget(jobMsg)
 formLayout.addWidget(countMsg)
 
+lineEditHeight = 20
+lineEditWidth = 125
+
+companyColumn.setFixedSize(lineEditWidth/3, lineEditHeight)
+titleColumn.setFixedSize(lineEditWidth/3, lineEditHeight)
+startAt.setFixedSize(lineEditWidth, lineEditHeight)
+nameMsg.setFixedSize(lineEditWidth, lineEditHeight)
+companyMsg.setFixedSize(lineEditWidth, lineEditHeight)
+jobMsg.setFixedSize(lineEditWidth, lineEditHeight)
+countMsg.setFixedSize(lineEditWidth, lineEditHeight)
+
+formLayout.addRow('Company Column:', companyColumn)
+formLayout.addRow('Title Column:', titleColumn)
 formLayout.addRow('Start Search:', btn)
 formLayout.addRow('Start At:', startAt)
 formLayout.addRow('Name:', nameMsg)
@@ -204,18 +252,75 @@ class eventFilter(QtCore.QObject):
     def eventFilter(self, obj, event):
         if event.type() == QtCore.QEvent.KeyPress:
             print(startAt.text())
-            if event.key() == 16777220:
+            if event.key() == 16777220 and companyColumn.text() != '': # and titleBefore != title:
+                global companyCol
+                companyCol = companyColumn.text()
+            if event.key() == 16777220 and titleColumn.text() != '': # and titleBefore != title:
+                global titleCol
+                titleCol = titleColumn.text()
+            if event.key() == 16777220 and startAt.text() != '':
                 global count
-                count = int(startAt.text())
+                try:
+                    count = (int(startAt.text()))
+                except:
+                    print('Enter a number into count')
+            if event.key() == 16777220 and companyMsg.text() != '': # and companyBefore != copyItem:
+                global copyItem
+                #copyItem = companyMsg.text()
+                newCompanyName = companyMsg.text()
+                # data.at[count, 'New Company'] = copyItem
+                # print(copyItem)
+                # print(data.at[count, 'New Company'])
+                #companyVar = 'G' + str(count + 1)
+                companyVar = companyCol + str(count + 1)
+                companyVar2 = 'A' + str(count+2)
+                companyTopVar = companyCol + '1'
+                #sheet_obj[companyVar].value = copyItem
+                font = Font(color="FF0000")
+                sheet_obj[companyVar].value = newCompanyName
+                sheet_obj[companyVar].font = font
+                sheet_obj[companyTopVar].value = 'New Company'
+                # Tried and failed to change next value of first column's Company name to old company name
+                # companyDetector = data.loc[count + 1, 'Company']
+                # if companyDetector == '':
+                #     sheet_obj[companyVar2].value = companyName
+                #     print('Old company name')
+                print(companyVar)
+                wb.save(filepath)
+                print('New Company Saved')
+            if event.key() == 16777220 and jobMsg.text() != '': # and titleBefore != title:
+                global title
+                title = jobMsg.text()
+                #titleVar = 'H' + str(count + 1)
+                titleVar = titleCol + str(count + 1)
+                titleTopVar = titleCol + '1'
+                sheet_obj[titleVar].value = title
+                sheet_obj[titleVar].font = font
+                sheet_obj[titleTopVar].value = 'New Title'
+                print(titleVar)
+                wb.save(filepath)
+                print('New title saved')
+
         return obj.eventFilter(obj, event)
 
 
 # startAt.returnPressed()
 #
 
-filter = eventFilter(startAt)
-startAt.installEventFilter(filter)
+companyNameFilter = eventFilter(companyColumn)
+companyColumn.installEventFilter(companyNameFilter)
 
+titleNameFilter = eventFilter(titleColumn)
+titleColumn.installEventFilter(titleNameFilter)
+
+countFilter = eventFilter(startAt)
+startAt.installEventFilter(countFilter)
+
+companyNameFilter = eventFilter(companyMsg)
+companyMsg.installEventFilter(companyNameFilter)
+
+jobFilter = eventFilter(jobMsg)
+jobMsg.installEventFilter(jobFilter)
 
 dlgLayout.addLayout(formLayout)
 dlgLayout.setAlignment(Qt.AlignCenter)
