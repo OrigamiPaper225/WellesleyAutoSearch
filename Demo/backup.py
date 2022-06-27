@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import QFormLayout
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QToolBar
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QDialogButtonBox
 from PyQt5.QtCore import Qt
@@ -68,20 +69,48 @@ print(count)
 
 def _getData():
     """Getting data from Excel"""
-
-    global data
-    data = pandas.read_excel(filepath)
-    #self.names = self.data.loc[:, "Name"]
-    print('Data received')
-    """Organizing into Variables"""
-    print(data)
-    print(filepath)
+    try:
+        global data
+        global filepath
+        data = pandas.read_excel(filepath)
+        #self.names = self.data.loc[:, "Name"]
+        print('Data received')
+        """Organizing into Variables"""
+        print(data)
+        print(filepath)
+    except:
+        filepath = askopenfilename()
 
 def _prepExcel():
     global sheet_obj
     global wb
     wb = openpyxl.load_workbook(filepath)
     sheet_obj = wb.active
+
+def _prepData():
+    try:
+        global names
+        names = data.loc[:, targetnamecolid]
+        print(targetnamecolid)
+        global name
+        #if count-1<0:
+        name = names[count]
+        # else:
+        #     name = names[count - 1]
+    except:# print(count)
+        print('Names has a problem')
+    try:
+        global companyName
+        companyName = data.loc[count, targetfirmcolid]
+    except:
+        print('Company name has a problem')
+    try:
+        global title
+        title = data.loc[count, targettitlecolid]
+        print(title)
+    except:
+        print('Please re-enter the Name, Company, or Title column')
+
 
 def setNewConfigData():
     user_info["filepath"] = filepath
@@ -117,7 +146,7 @@ class AnotherWindow(QWidget):
     def __init__(self):
         # QMainWindow.__init__(self, parent=parent)
         super().__init__()
-        self.setStyleSheet("background-color: #FFFFFF;")
+        self.setStyleSheet("background-color: #FFFFFF;font-family: Arial;")
         # self.layout = QFormLayout()
         # self.label = QLabel("hi")
         # self.layout.addWidget(self.label)
@@ -141,29 +170,9 @@ class AnotherWindow(QWidget):
         self.setFixedSize(300, 400)
         self.setWindowTitle('Config')
         self._connectSignals()
-        self._prepData()
+        _prepData()
         self._prepNewCols()
 
-    def _prepData(self):
-        try:
-            global names
-            names = data.loc[:, targetnamecolid]
-            print(targetnamecolid)
-            global name
-            name = names[count - 1]
-        except:# print(count)
-            print('Names has a problem')
-        try:
-            global companyName
-            companyName = data.loc[count, targetfirmcolid]
-        except:
-            print('Company name has a problem')
-        try:
-            global title
-            title = data.loc[count, targettitlecolid]
-            print(title)
-        except:
-            print('Please re-enter the Name, Company, or Title column')
 
 
         #self.title = data.loc[count, 'Title']
@@ -190,28 +199,34 @@ class AnotherWindow(QWidget):
         selectFile = QPushButton('Select Excel File')
         selectFile.setStyleSheet("background-color: #EEF3F8;"
                                        "border-radius: 6px;")
+        selectFile.setFont(QFont('Arial', 14))
         global targetNameColumn
         targetNameColumn = QLineEdit(user_info["targetnamecolid"])
         targetNameColumn.setStyleSheet("background-color: #EEF3F8;"
         "border-radius: 6px;")
         global targetCompanyColumn
         targetCompanyColumn = QLineEdit(user_info["targetfirmcolid"])
+        targetCompanyColumn.setFont(QFont('Arial', 14))
         targetCompanyColumn.setStyleSheet("background-color: #EEF3F8;"
                                        "border-radius: 6px;")
         global targetTitleColumn
         targetTitleColumn = QLineEdit(user_info["targettitlecolid"])
+        targetTitleColumn.setFont(QFont('Arial', 14))
         targetTitleColumn.setStyleSheet("background-color: #EEF3F8;"
                                        "border-radius: 6px;")
         global newCompanyNameColumn
         newCompanyNameColumn = QLineEdit(user_info["newfirmcol"])
+        newCompanyNameColumn.setFont(QFont('Arial', 14))
         newCompanyNameColumn.setStyleSheet("background-color: #EEF3F8;"
                                        "border-radius: 6px;")
         global newTitleColumn
         newTitleColumn = QLineEdit(user_info["newtitlecol"])
+        newTitleColumn.setFont(QFont('Arial', 14))
         newTitleColumn.setStyleSheet("background-color: #EEF3F8;"
                                            "border-radius: 6px;")
         global startAt
         startAt = QLineEdit(user_info["countsaved"])
+        startAt.setFont(QFont('Arial', 14))
         startAt.setStyleSheet("background-color: #EEF3F8;"
                                      "border-radius: 6px;")
         startAt.setFocus()
@@ -222,9 +237,10 @@ class AnotherWindow(QWidget):
         targetTitleColumn.setFixedSize(int(self.lineEditWidth / 2), self.lineEditHeight)
         newCompanyNameColumn.setFixedSize(int(self.lineEditWidth / 2), self.lineEditHeight)
         newTitleColumn.setFixedSize(int(self.lineEditWidth / 2), self.lineEditHeight)
-        startAt.setFixedSize(self.lineEditWidth/2, self.lineEditHeight)
+        startAt.setFixedSize(int(self.lineEditWidth/2), self.lineEditHeight)
         global fileNameLabel
         fileNameLabel = QLabel('Current file:' + os.path.basename(filepath))
+        fileNameLabel.setFont(QFont('Arial', 14))
         fileNameLabel.setStyleSheet("color:black;font-weight: 600;")
 
         self.generalLayout.addWidget(selectFile)
@@ -235,7 +251,7 @@ class AnotherWindow(QWidget):
         self.generalLayout.addWidget(newCompanyNameColumn)
         self.generalLayout.addWidget(newTitleColumn)
         self.generalLayout.addWidget(startAt)
-
+        selectFile.setFont(QFont('Arial', 14))
         selectFile.setStyleSheet(
             "color: white;"
             "background-color: #0A66C2;"
@@ -245,6 +261,7 @@ class AnotherWindow(QWidget):
             "border-color: #0A66C2;"
             "border-radius: 3px")
         self.savebtn = QPushButton('Save Selection')
+        self.savebtn.setFont(QFont('Arial', 14))
         self.savebtn.setStyleSheet(
             "color: white;"
             "background-color: #0A66C2;"
@@ -268,11 +285,17 @@ class AnotherWindow(QWidget):
 
 
         self.cl1.setStyleSheet("color:black;font-weight: 600;")
+        self.cl1.setFont(QFont('Arial', 14))
         self.cl2.setStyleSheet("color:black;font-weight: 600;")
+        self.cl2.setFont(QFont('Arial', 14))
         self.cl3.setStyleSheet("color:black;font-weight: 600;")
+        self.cl3.setFont(QFont('Arial', 14))
         self.cl4.setStyleSheet("color:black;font-weight: 600;")
+        self.cl4.setFont(QFont('Arial', 14))
         self.cl5.setStyleSheet("color:black;font-weight: 600;")
+        self.cl5.setFont(QFont('Arial', 14))
         self.cl6.setStyleSheet("color:black;font-weight: 600;")
+        self.cl6.setFont(QFont('Arial', 14))
 
         self.formLayout.addRow(self.cl1, targetNameColumn)
         self.formLayout.addRow(self.cl2, targetCompanyColumn)
@@ -415,7 +438,7 @@ class AnotherWindow(QWidget):
 
         self.savebtn.clicked.connect(self.updateFilePath)
         self.savebtn.clicked.connect(_getData)
-        self.savebtn.clicked.connect(self._prepData)
+        self.savebtn.clicked.connect(_prepData)
         self.savebtn.clicked.connect(_prepExcel)
         self.savebtn.clicked.connect(setNewConfigData)
 
@@ -531,6 +554,7 @@ class MainWindow(QMainWindow):
     def _createButtons(self):
         """Create the buttons."""
         self.btn = QPushButton('LinkedIn Search')
+        self.btn.setFont(QFont('Arial', 14))
         self.btn.setStyleSheet(
             "color: white;"
             "background-color: #0A66C2;"
@@ -540,8 +564,11 @@ class MainWindow(QMainWindow):
             "border-color: #0A66C2;"
             "border-radius: 3px")
         self.configbtn = QPushButton('Config')
+        self.configbtn.setFont(QFont('Arial', 14))
         self.google = QPushButton('Search')
+        self.google.setFont(QFont('Arial', 14))
         self.backbtn = QPushButton('Go Back')
+        self.backbtn.setFont(QFont('Arial', 14))
         self.backbtn.setStyleSheet(
             "padding: 2px 5px 2px 5px;"
             "color: white;"
@@ -561,6 +588,7 @@ class MainWindow(QMainWindow):
             "border-color: #0A66C2;"
             "border-radius: 3px")
         self.btn.setFixedSize(self.lineEditWidth, self.lineEditHeight)
+        self.backbtn.setFixedSize(self.lineEditWidth, self.lineEditHeight)
         self.google.setFixedSize(self.lineEditWidth, self.lineEditHeight)
         self.btn.setFixedSize(self.lineEditWidth, self.lineEditHeight)
         self.formLayout.addWidget(self.btn)
@@ -590,22 +618,28 @@ class MainWindow(QMainWindow):
         # self.formLayout.addRow('Title Column:', self.titleColumn)
         self.startLabel = QLabel('Start Search:')
         self.startLabel.setStyleSheet("color:black;font-weight: 600;")
+        self.startLabel.setFont(QFont('Arial', 14))
         self.formLayout.addRow(self.startLabel, self.btn)
         # self.formLayout.addRow('Start At:', self.startAt)
         self.nameLabel = QLabel('Candidate Name:')
         self.nameLabel.setStyleSheet("color:black;font-weight: 600;")
+        self.nameLabel.setFont(QFont('Arial', 14))
         self.formLayout.addRow(self.nameLabel, self.nameMsg)
         self.firmLabel = QLabel('Firm Name:')
         self.firmLabel.setStyleSheet("color:black;font-weight: 600;")
+        self.firmLabel.setFont(QFont('Arial', 14))
         self.formLayout.addRow(self.firmLabel, companyMsg)
         self.jobLabel = QLabel('Candidate Title:')
         self.jobLabel.setStyleSheet("color:black;font-weight: 600;")
+        self.jobLabel.setFont(QFont('Arial', 14))
         self.formLayout.addRow(self.jobLabel, jobMsg)
         self.countLabel = QLabel('Count:')
         self.countLabel.setStyleSheet("color:black;font-weight: 600;")
+        self.countLabel.setFont(QFont('Arial', 14))
         self.formLayout.addRow(self.countLabel, self.countMsg)
         self.googleLabel = QLabel('Google Search')
         self.googleLabel.setStyleSheet("color:black;font-weight: 600;")
+        self.googleLabel.setFont(QFont('Arial', 14))
         self.formLayout.addRow(self.googleLabel, self.google)
 
     def toggle_window(self):
@@ -624,9 +658,9 @@ class MainWindow(QMainWindow):
             return cell
         # try:
         global name
-        self.nameMsg.setText(name)
+        self.nameMsg.setText(str(name))
         print(name)
-        self.nameGoogle = splitName(name)
+        self.nameGoogle = splitName(str(name))
         print(self.nameGoogle)
         # except:
         #     self.nameMsg.setText('Empty cell, skip to next')
@@ -662,7 +696,7 @@ class MainWindow(QMainWindow):
 
     def counter(self):
         try:
-            self.counter = str(count)
+            self.counter = str(count+1)
             self.countMsg.setText(self.counter)
             print('this is count' + self.counter)
             print(count)
@@ -804,7 +838,7 @@ class MainWindow(QMainWindow):
         self.btn.clicked.connect(AnotherWindow.updateFilePath)
         self.btn.clicked.connect(_getData)
         self.btn.clicked.connect(_prepExcel)
-        self.btn.clicked.connect(AnotherWindow._prepData)
+        self.btn.clicked.connect(_prepData)
         self.btn.clicked.connect(self.nameStatus)
         self.btn.clicked.connect(self.companyNameStatus)
         self.btn.clicked.connect(self.job)
@@ -813,7 +847,7 @@ class MainWindow(QMainWindow):
 
         self.google.clicked.connect(self.googleSearch)
         self.backbtn.clicked.connect(self.goback)
-        self.backbtn.clicked.connect(AnotherWindow._prepData)
+        self.backbtn.clicked.connect(_prepData)
         self.backbtn.clicked.connect(self.startSearch)
         self.backbtn.clicked.connect(self.nameStatus)
         self.backbtn.clicked.connect(self.companyNameStatus)
@@ -839,6 +873,7 @@ def main():
 #getConfigData()
 _getData()
 _prepExcel()
+_prepData()
 #getDataFromConfig()
 main()
 
