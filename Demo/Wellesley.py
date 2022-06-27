@@ -1,4 +1,7 @@
 # Possibly try and implement scroll, but not that needed
+# Add 2 inputs, one for name of top of Company column, and the other for name of top of Name and title.
+# If possible, make this a separate tab
+import re
 import sys
 import pandas
 import webbrowser
@@ -12,7 +15,6 @@ from openpyxl.styles import Font
 # from selenium.webdriver.support import expected_conditions as EC
 # from selenium.webdriver.common.by import By
 from PyQt5 import QtCore
-
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QWidget
@@ -25,14 +27,30 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QDialogButtonBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QObject
+# from config import targetNameCol
+# from config import targetFirmCol
+# from config import newFirmCol
+# from config import newTitleCol
+# from config import countSaved
 
 
 def nameStatus():
     try:
         nameMsg.setText(name)
+        global nameGoogle
+        nameGoogle = splitName(name)
     except:
         nameMsg.setText('Empty cell, skip to next')
         print('Empty cell, skip to next')
+
+
+def splitName(cell):
+    newCell = cell.split()
+    print(newCell)
+    separator = '+'
+    joined = separator.join(newCell)
+    print(joined)
+    return cell
 
 
 def companyNameStatus():
@@ -40,7 +58,8 @@ def companyNameStatus():
         global companyBefore
         companyBefore = copyItem
         companyMsg.setText(copyItem)
-
+        global companyGoogle
+        companyGoogle = splitName(copyItem)
     except:
         companyMsg.setText('Empty cell, skip to next')
         print('Empty cell, skip to next')
@@ -68,7 +87,7 @@ def counter():
 
 
 count = 0
-
+run_once = 0
 
 def startSearch():
     global count
@@ -93,11 +112,15 @@ def startSearch():
     sheet_obj = wb.active
 
 
-    names = data.loc[:, "Name "]
+    names = data.loc[:, "Name"]
 
-    def search_item(search_query):
+    def linkedinsearch_item(search_query):
         webbrowser.open("https://www.linkedin.com/search/results/all/?keywords=" +
                         str(search_query) + "&origin=GLOBAL_SEARCH_HEADER&sid=(s5")
+
+    def googlesearch_item(search_query):
+        webbrowser.open("https://www.google.com/search?client=firefox-b-d&q=" +
+                        str(search_query))
 
     name = names[count]
 
@@ -112,7 +135,7 @@ def startSearch():
     # for name in names:
     # starts here
     global companyName
-    companyName = data.loc[count, 'Company']
+    companyName = data.loc[count, 'Firm']
     title = data.loc[count, 'Title']
 
 
@@ -123,9 +146,25 @@ def startSearch():
         print('Count out of 2100:')
         print(count)
         print(title)
-        search_item(name)
+        linkedinsearch_item(name)
         global companyDetector
 
+    def googleSearch():
+        googlesearch_item(nameGoogle + ' ' + companyGoogle)
+    google = QPushButton('Search')
+    google.clicked.connect(googleSearch)
+    google.setFixedSize(150, 25)
+    global run_once
+    def googleButton(x):
+        if x == 0:
+            formLayout.addWidget(google)
+            formLayout.addRow('Google Search:', google)
+            x = 1
+            return x
+    run_once = googleButton(run_once)
+
+    # if count != 0 and nameMsg != '':
+    #
     # if pandas.isnull(copyItem) and pandas.isnull(data.loc[count, 'Name ']):
     # if pandas.isnull(data.loc[:, 'Name ']): # Tried making it skip over nan
     #     # print('Count out of 2100:')
@@ -146,6 +185,7 @@ def startSearch():
         count += 1
         print(copyItem)
         iterate()
+
         # input("Press Enter to continue...")
         # scroll()
         # input("Press Enter to continue...")
@@ -185,22 +225,33 @@ app = QApplication(sys.argv)
 window = QWidget()
 # window.setStyleSheet("background-color:lightgrey;")
 window.setWindowTitle('Wellesley LinkedIn Searcher')
-window.setFixedSize(300, 450)
+window.setFixedSize(300, 550)
 # layout = QVBoxLayout()
 
 btns = QDialogButtonBox()
 
-btn = QPushButton('Search')
+btn = QPushButton('LinkedIn Search')
 btn.clicked.connect(startSearch)
 btn.clicked.connect(nameStatus)
 btn.clicked.connect(companyNameStatus)
 btn.clicked.connect(job)
 btn.clicked.connect(counter)
 
+def goback():
+    global count
+    count -= 2
+    print(count)
+
+
+backbtn = QPushButton('Go Back')
+backbtn.clicked.connect(goback)
+backbtn.clicked.connect(startSearch)
+backbtn.clicked.connect(counter)
+backbtn.setFixedSize(75, 25)
+
 dlgLayout = QVBoxLayout()
 
 formLayout = QFormLayout()
-formLayout.addWidget(btn)
 btn.setFixedSize(150, 25)
 
 # startAt = QLineEdit()
@@ -208,6 +259,9 @@ btn.setFixedSize(150, 25)
 # companyMsg = QLabel('')
 # jobMsg = QLabel('')
 # countMsg = QLabel('')
+
+targetCompanyColumnInput = QLineEdit()
+targetTitleColumnInput = QLineEdit()
 
 companyColumn = QLineEdit()
 titleColumn = QLineEdit()
@@ -218,9 +272,9 @@ companyMsg = QLineEdit('')
 jobMsg = QLineEdit('')
 countMsg = QLabel('')
 
+formLayout.addWidget(backbtn)
 formLayout.addWidget(companyColumn)
 formLayout.addWidget(titleColumn)
-
 formLayout.addWidget(startAt)
 formLayout.addWidget(nameMsg)
 formLayout.addWidget(companyMsg)
@@ -230,14 +284,15 @@ formLayout.addWidget(countMsg)
 lineEditHeight = 20
 lineEditWidth = 125
 
-companyColumn.setFixedSize(lineEditWidth/3, lineEditHeight)
-titleColumn.setFixedSize(lineEditWidth/3, lineEditHeight)
+companyColumn.setFixedSize(int(lineEditWidth/3), lineEditHeight)
+titleColumn.setFixedSize(int(lineEditWidth/3), lineEditHeight)
 startAt.setFixedSize(lineEditWidth, lineEditHeight)
 nameMsg.setFixedSize(lineEditWidth, lineEditHeight)
 companyMsg.setFixedSize(lineEditWidth, lineEditHeight)
 jobMsg.setFixedSize(lineEditWidth, lineEditHeight)
 countMsg.setFixedSize(lineEditWidth, lineEditHeight)
 
+formLayout.addRow('Go Back:', backbtn)
 formLayout.addRow('Company Column:', companyColumn)
 formLayout.addRow('Title Column:', titleColumn)
 formLayout.addRow('Start Search:', btn)
@@ -262,6 +317,7 @@ class eventFilter(QtCore.QObject):
                 global count
                 try:
                     count = (int(startAt.text()))
+                    startAt.setText('')
                 except:
                     print('Enter a number into count')
             if event.key() == 16777220 and companyMsg.text() != '': # and companyBefore != copyItem:
