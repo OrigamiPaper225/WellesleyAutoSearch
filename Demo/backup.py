@@ -519,6 +519,8 @@ class MainWindow(QMainWindow):
 
 
 
+
+
     def _createInputs(self):
         """Create the display."""
         # self.companyColumn = QLineEdit('')
@@ -547,6 +549,7 @@ class MainWindow(QMainWindow):
         # self.generalLayout.addWidget(self.startAt)
         self.generalLayout.addWidget(companyMsg)
         self.generalLayout.addWidget(jobMsg)
+
         # self.display.setReadOnly(True)
         # Add the display to the general layout
         # self.generalLayout.addWidget(self.display)
@@ -637,11 +640,20 @@ class MainWindow(QMainWindow):
         self.countLabel.setStyleSheet("color:black;font-weight: 600;")
         self.countLabel.setFont(QFont('Arial', 14))
         self.formLayout.addRow(self.countLabel, self.countMsg)
-        self.googleLabel = QLabel('Google Search')
+        self.googleLabel = QLabel('Google Search:')
         self.googleLabel.setStyleSheet("color:black;font-weight: 600;")
         self.googleLabel.setFont(QFont('Arial', 14))
         self.formLayout.addRow(self.googleLabel, self.google)
-
+        self.TipsLabel = QLabel('Tips: Include firm name next to each')
+        self.Tips2Label = QLabel('candidate in the Excel sheet')
+        self.TipsLabel.setStyleSheet("color:black;font-weight: 600;")
+        self.TipsLabel.setFont(QFont('Arial', 14))
+        self.generalLayout.addWidget(self.TipsLabel)
+        self.generalLayout.addWidget(self.Tips2Label)
+        #self.formLayout.addRow(self.TipsLabel, self.Tips2Label)
+        self.Tips2Label.setStyleSheet("color:black;font-weight: 600;")
+        self.Tips2Label.setFont(QFont('Arial', 14))
+        # self.formLayout.addRow(, '')
     def toggle_window(self):
         if self.w.isVisible():
             self.w.hide()
@@ -657,11 +669,15 @@ class MainWindow(QMainWindow):
             print(joined)
             return cell
         # try:
-        global name
-        self.nameMsg.setText(str(name))
-        print(name)
-        self.nameGoogle = splitName(str(name))
-        print(self.nameGoogle)
+        try:
+
+            global name
+            self.nameMsg.setText(str(name))
+            print(name)
+            self.nameGoogle = splitName(str(name))
+            print(self.nameGoogle)
+        except:
+            print('No name')
         # except:
         #     self.nameMsg.setText('Empty cell, skip to next')
         #     print('Empty cell, skip to next')
@@ -687,8 +703,11 @@ class MainWindow(QMainWindow):
         #try:
             #global titleBefore
             #self.titleBefore = title
-        jobMsg.setText(title)
-        print('this is title'+title)
+        try:
+            jobMsg.setText(title)
+            print('this is title'+title)
+        except:
+            print('No job')
             #companyMsg.setText(self.copyItem)
         # except:
         #     jobMsg.setText('Empty cell, skip to next')
@@ -738,9 +757,13 @@ class MainWindow(QMainWindow):
         # else:
         print('Company name has been copied to your clipboard')
         global companyName
-        self.copyItem = companyName
-        pyperclip.copy(' ' + self.copyItem)
         global count
+        try:
+            self.copyItem = companyName
+            pyperclip.copy(' ' + self.copyItem)
+        except:
+            global targetfirmcolid
+            pyperclip.copy(' ' + str(data.loc[count - 1, targetfirmcolid]))
         count += 1
         print(count)
         iterate()
@@ -866,7 +889,7 @@ def main():
     window = MainWindow()
     window.show()
     window.setWindowTitle('Wellesley LinkedIn Searcher')
-    window.setFixedSize(300, 320)
+    window.setFixedSize(300, 360)
     app.exec()
 
 
