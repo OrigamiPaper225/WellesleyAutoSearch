@@ -758,14 +758,11 @@ class MainWindow(QMainWindow):
         # else:
         print('Company name has been copied to your clipboard')
         global companyName
-<<<<<<< Updated upstream
-=======
         if companyName == str:
             self.copyItem = companyName
             pyperclip.copy(' ' + self.copyItem)
         else:
             print("No copy")
->>>>>>> Stashed changes
         global count
         try:
             self.copyItem = companyName
