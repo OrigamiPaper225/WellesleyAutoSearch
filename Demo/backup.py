@@ -79,7 +79,10 @@ def _getData():
         print(data)
         print(filepath)
     except:
-        filepath = askopenfilename()
+        try:
+            filepath = askopenfilename()
+        except:
+            filepath = './Example Excel (completely random profiles).xlsx'
 
 def _prepExcel():
     global sheet_obj
@@ -88,28 +91,37 @@ def _prepExcel():
     sheet_obj = wb.active
 
 def _prepData():
+    #try:
+    global names
     try:
-        global names
         names = data.loc[:, targetnamecolid]
         print(targetnamecolid)
         global name
         #if count-1<0:
         name = names[count]
+    except:
+        statusLabel.setText('Status: Please check Candidate Name')
         # else:
         #     name = names[count - 1]
-    except:# print(count)
-        print('Names has a problem')
+    # except:# print(count)
+    #     print('Names has a problem')
+    #try:
+    global companyName
     try:
-        global companyName
         companyName = data.loc[count, targetfirmcolid]
     except:
-        print('Company name has a problem')
+        statusLabel.setText('Status: Please check Company Name')
+    # except:
+    #     print('Company name has a problem')
+    #try:
+    global title
     try:
-        global title
         title = data.loc[count, targettitlecolid]
         print(title)
     except:
-        print('Please re-enter the Name, Company, or Title column')
+        statusLabel.setText('Status: Please check Title')
+    # except:
+    #     print('Please re-enter the Name, Company, or Title column')
 
 
 def setNewConfigData():
@@ -645,15 +657,21 @@ class MainWindow(QMainWindow):
         self.googleLabel.setStyleSheet("color:black;font-weight: 600;")
         self.googleLabel.setFont(QFont('Arial', 10))
         self.formLayout.addRow(self.googleLabel, self.google)
-        self.TipsLabel = QLabel('Tips: Include firm name next to each')
+
+        global statusLabel
+        statusLabel = QLabel('Status:')
+        self.TipsLabel = QLabel('Tip: Include firm name next to each')
         self.Tips2Label = QLabel('candidate in the Excel sheet')
+        statusLabel.setStyleSheet("color:black;font-weight: 600;")
+        statusLabel.setFont(QFont('Arial', 10))
         self.TipsLabel.setStyleSheet("color:black;font-weight: 600;")
-        self.TipsLabel.setFont(QFont('Arial', 14))
+        self.TipsLabel.setFont(QFont('Arial', 10))
+        self.generalLayout.addWidget(statusLabel)
         self.generalLayout.addWidget(self.TipsLabel)
         self.generalLayout.addWidget(self.Tips2Label)
         #self.formLayout.addRow(self.TipsLabel, self.Tips2Label)
         self.Tips2Label.setStyleSheet("color:black;font-weight: 600;")
-        self.Tips2Label.setFont(QFont('Arial', 14))
+        self.Tips2Label.setFont(QFont('Arial', 10))
         # self.formLayout.addRow(, '')
     def toggle_window(self):
         if self.w.isVisible():
