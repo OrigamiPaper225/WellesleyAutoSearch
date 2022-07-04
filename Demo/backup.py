@@ -93,14 +93,28 @@ def _prepExcel():
 def _prepData():
     #try:
     global names
+    global name
     try:
         names = data.loc[:, targetnamecolid]
         print(targetnamecolid)
-        global name
+
         #if count-1<0:
         name = names[count]
     except:
-        statusLabel.setText('Status: Please check Candidate Name')
+        try:
+            names = data.loc[:, 'Name']
+            name = names[count]
+        except:
+            try:
+                names = data.loc[:,'Candidate']
+                name = names[count]
+            except:
+                try:
+                    names = data.loc[:,'Name ']
+                    name = names[count]
+                except:
+                    print('Name has a problem')
+    #     statusLabel.setText('Status: Please check Candidate Name')
         # else:
         #     name = names[count - 1]
     # except:# print(count)
@@ -110,7 +124,14 @@ def _prepData():
     try:
         companyName = data.loc[count, targetfirmcolid]
     except:
-        statusLabel.setText('Status: Please check Company Name')
+        try:
+            companyName = data.loc[:, 'Firm']
+        except:
+            try:
+                companyName = data.loc[:, 'Company']
+            except:
+                print('Company has a problem')
+    #     statusLabel.setText('Status: Please check Company Name')
     # except:
     #     print('Company name has a problem')
     #try:
@@ -119,7 +140,9 @@ def _prepData():
         title = data.loc[count, targettitlecolid]
         print(title)
     except:
-        statusLabel.setText('Status: Please check Title')
+        print('Title has a problem')
+        title = data.loc[:, 'Title']
+    #     statusLabel.setText('Status: Please check Title')
     # except:
     #     print('Please re-enter the Name, Company, or Title column')
 
@@ -658,15 +681,15 @@ class MainWindow(QMainWindow):
         self.googleLabel.setFont(QFont('Arial', 10))
         self.formLayout.addRow(self.googleLabel, self.google)
 
-        global statusLabel
-        statusLabel = QLabel('Status:')
+        #global statusLabel
+        #statusLabel = QLabel('Status:')
         self.TipsLabel = QLabel('Tip: Include firm name next to each')
         self.Tips2Label = QLabel('candidate in the Excel sheet')
-        statusLabel.setStyleSheet("color:black;font-weight: 600;")
-        statusLabel.setFont(QFont('Arial', 10))
+        #statusLabel.setStyleSheet("color:black;font-weight: 600;")
+        #statusLabel.setFont(QFont('Arial', 10))
         self.TipsLabel.setStyleSheet("color:black;font-weight: 600;")
         self.TipsLabel.setFont(QFont('Arial', 10))
-        self.generalLayout.addWidget(statusLabel)
+        #self.generalLayout.addWidget(statusLabel)
         self.generalLayout.addWidget(self.TipsLabel)
         self.generalLayout.addWidget(self.Tips2Label)
         #self.formLayout.addRow(self.TipsLabel, self.Tips2Label)
@@ -776,7 +799,7 @@ class MainWindow(QMainWindow):
         # else:
         print('Company name has been copied to your clipboard')
         global companyName
-        if companyName == str:
+        if type(companyName) == str:
             self.copyItem = companyName
             pyperclip.copy(' ' + self.copyItem)
         else:
