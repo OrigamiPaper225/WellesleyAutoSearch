@@ -70,19 +70,18 @@ print(count)
 def _getData():
     """Getting data from Excel"""
     try:
-        global data
-        global filepath
-        data = pandas.read_excel(filepath)
-        #self.names = self.data.loc[:, "Name"]
-        print('Data received')
-        """Organizing into Variables"""
-        print(data)
-        print(filepath)
+        filepath = askopenfilename()
     except:
-        try:
-            filepath = askopenfilename()
-        except:
-            filepath = './Example Excel (completely random profiles).xlsx'
+        filepath = './Example Excel (completely random profiles).xlsx'
+    global data
+    global filepath
+    data = pandas.read_excel(filepath)
+    #self.names = self.data.loc[:, "Name"]
+    print('Data received')
+    """Organizing into Variables"""
+    print(data)
+    print(filepath)
+
 
 def _prepExcel():
     global sheet_obj
