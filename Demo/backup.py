@@ -546,7 +546,7 @@ class MainWindow(QMainWindow):
 
     def _createMenu(self):
         self.menu = self.menuBar().addMenu("&Menu")
-        self.menu.addAction('&Exit', self.close)
+        self.menu.addAction('&Exit', self.closeExcel)
         #self.menu.addAction('&Home', self.close)
         #self.menu.addAction('&Config', self.show_new_window)
         self.menu.addAction('&Config', self.toggle_window)
@@ -557,7 +557,7 @@ class MainWindow(QMainWindow):
     def _createToolBar(self):
         tools = QToolBar()
         self.addToolBar(tools)
-        tools.addAction('Exit', self.close)
+        #tools.addAction('Exit', self.close)
         tools.addAction('Exit', self.closeExcel)
         #tools.addAction('&Home', self.close)
         #tools.addAction('&Config', self.show_new_window)
@@ -730,6 +730,7 @@ class MainWindow(QMainWindow):
     def closeExcel(self):
         wb.save
         wb.close
+        sys.exit()
 
     def toggle_window(self):
         if self.w.isVisible():
