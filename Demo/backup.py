@@ -558,6 +558,7 @@ class MainWindow(QMainWindow):
         tools = QToolBar()
         self.addToolBar(tools)
         tools.addAction('Exit', self.close)
+        tools.addAction('Exit', self.closeExcel)
         #tools.addAction('&Home', self.close)
         #tools.addAction('&Config', self.show_new_window)
         tools.addAction('&Config', self.toggle_window)
@@ -725,6 +726,11 @@ class MainWindow(QMainWindow):
         self.Tips2Label.setStyleSheet("color:black;font-weight: 600;")
         self.Tips2Label.setFont(QFont('Arial', 10))
         # self.formLayout.addRow(, '')
+
+    def closeExcel(self):
+        wb.save
+        wb.close
+
     def toggle_window(self):
         if self.w.isVisible():
             self.w.hide()
