@@ -126,12 +126,15 @@ def _prepData():
     global companyName
     try:
         companyName = data.loc[count, targetfirmcolid]
+        print('this is company name' + companyName)
     except:
         try:
-            companyName = data.loc[:, 'Firm']
+            companyName = data.loc[count, 'Firm']
+            print('this is company name' + companyName)
         except:
             try:
-                companyName = data.loc[:, 'Company']
+                companyName = data.loc[count, 'Company']
+                print('this is company name' + companyName)
             except:
                 print('Company has a problem')
     #     statusLabel.setText('Status: Please check Company Name')
@@ -737,16 +740,30 @@ class MainWindow(QMainWindow):
 
     def companyNameStatus(self):
         # try:
-        def splitName(cell):
-            newCell = cell.split()
-            print(newCell)
-            separator = '+'
-            joined = separator.join(newCell)
-            print(joined)
-            return cell
-        #self.companyBefore = companyName
-        companyMsg.setText(str(companyName))
-        self.companyGoogle = splitName(str(companyName))
+        if type(companyName) == str:
+            def splitName(cell):
+                newCell = cell.split()
+                print(newCell)
+                separator = '+'
+                joined = separator.join(newCell)
+                print(joined)
+                return cell
+            #self.companyBefore = companyName
+            companyMsg.setText(str(companyName))
+            self.companyGoogle = splitName(str(companyName))
+        else:
+            def splitName(cell):
+                newCell = cell.split()
+                print(newCell)
+                separator = '+'
+                joined = separator.join(newCell)
+                print(joined)
+                return cell
+            #self.companyBefore = companyName
+            companyMsg.setText(str(self.copyItem))
+            self.companyGoogle = splitName(str(self.copyItem))
+
+
 
         # except:
         #     companyMsg.setText('Empty cell, skip to next')
