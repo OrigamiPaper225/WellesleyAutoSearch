@@ -69,12 +69,12 @@ print(count)
 
 def _getData():
     """Getting data from Excel"""
+    global data
+    global filepath
     try:
         filepath = askopenfilename()
     except:
         filepath = './Example Excel (completely random profiles).xlsx'
-    global data
-    global filepath
     data = pandas.read_excel(filepath)
     #self.names = self.data.loc[:, "Name"]
     print('Data received')
