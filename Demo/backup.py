@@ -67,20 +67,24 @@ print(newfirmcol)
 print(newtitlecol)
 print(count)
 
-def _getData():
-    """Getting data from Excel"""
-    global data
+def getFileName():
     global filepath
     try:
         filepath = askopenfilename()
     except:
         filepath = './Example Excel (completely random profiles).xlsx'
+
+
+def _getData():
+    """Getting data from Excel"""
+    global data
     data = pandas.read_excel(filepath)
     #self.names = self.data.loc[:, "Name"]
     print('Data received')
     """Organizing into Variables"""
     print(data)
     print(filepath)
+
 
 
 def _prepExcel():
@@ -808,12 +812,15 @@ class MainWindow(QMainWindow):
         else:
             print("No copy")
         global count
+        global targetfirmcolid
         try:
             self.copyItem = companyName
             pyperclip.copy(' ' + self.copyItem)
         except:
-            global targetfirmcolid
-            pyperclip.copy(' ' + str(data.loc[count - 1, targetfirmcolid]))
+            try:
+                pyperclip.copy(' ' + str(data.loc[count - 1, targetfirmcolid]))
+            except:
+                pyperclip.copy(' ' + str(data.loc[count, targetfirmcolid]))
         count += 1
         print(count)
         iterate()
@@ -944,6 +951,7 @@ def main():
 
 
 #getConfigData()
+getFileName()
 _getData()
 _prepExcel()
 _prepData()
