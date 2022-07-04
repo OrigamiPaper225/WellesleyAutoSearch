@@ -40,32 +40,38 @@ from tkinter.filedialog import askopenfilename
 from tkinter import Tk
 Tk().withdraw()
 
-config_obj = configparser.ConfigParser()
-# Read config.ini file
-configpath = './config.ini'
-#configpath = '/Users/jamesloh/PycharmProjects/WellesleyAutoSearch/Demo/config.ini'
-config_obj.read(configpath)
-# Get the postgresql section
-#global user_info
-user_info = config_obj["user_info"]
-
-filepath = user_info["filepath"]
-targetnamecolid = user_info["targetnamecolid"]
-targetfirmcolid = user_info["targetfirmcolid"]
-targettitlecolid = user_info["targettitlecolid"]
-newfirmcol = user_info["newfirmcol"]
-newtitlecol = user_info["newtitlecol"]
-count = int(user_info["countsaved"])
-
+def getConfigInfo():
+    global config_obj
+    global configpath
+    global filepath
+    global targetnamecolid
+    global targetfirmcolid
+    global user_info
+    global configpath
+    global targettitlecolid
+    global newfirmcol
+    global newtitlecol
+    global count
+    config_obj = configparser.ConfigParser()
+    configpath = './config.ini'
+    config_obj.read(configpath)
+    user_info = config_obj["user_info"]
+    filepath = user_info["filepath"]
+    targetnamecolid = user_info["targetnamecolid"]
+    targetfirmcolid = user_info["targetfirmcolid"]
+    targettitlecolid = user_info["targettitlecolid"]
+    newfirmcol = user_info["newfirmcol"]
+    newtitlecol = user_info["newtitlecol"]
+    count = int(user_info["countsaved"])
 
 
 # def getDataFromConfig():
 
-print(targetnamecolid)
-print(targetfirmcolid)
-print(newfirmcol)
-print(newtitlecol)
-print(count)
+# print(targetnamecolid)
+# print(targetfirmcolid)
+# print(newfirmcol)
+# print(newtitlecol)
+# print(count)
 
 def getFileName():
     global filepath
@@ -124,19 +130,26 @@ def _prepData():
     #     print('Names has a problem')
     #try:
     global companyName
+    global realCompanyColumn
     try:
         companyName = data.loc[count, targetfirmcolid]
         print('this is company name' + companyName)
     except:
         try:
-            companyName = data.loc[count, 'Firm']
+            option2 = 'Firm'
+            companyName = data.loc[count, option2]
             print('this is company name' + companyName)
+
+            realCompanyColumn = option2
         except:
             try:
-                companyName = data.loc[count, 'Company']
+                option3 = 'Company'
+                companyName = data.loc[count, option3]
                 print('this is company name' + companyName)
+                realCompanyColumn = option3
             except:
                 print('Company has a problem')
+                realCompanyColumn = targetfirmcolid
     #     statusLabel.setText('Status: Please check Company Name')
     # except:
     #     print('Company name has a problem')
@@ -491,6 +504,8 @@ class AnotherWindow(QWidget):
         self.savebtn.clicked.connect(_prepData)
         self.savebtn.clicked.connect(_prepExcel)
         self.savebtn.clicked.connect(setNewConfigData)
+        self.savebtn.clicked.connect(getConfigInfo)
+
 
 
 class MainWindow(QMainWindow):
@@ -760,8 +775,8 @@ class MainWindow(QMainWindow):
                 print(joined)
                 return cell
             #self.companyBefore = companyName
-            companyMsg.setText(str(self.copyItem))
-            self.companyGoogle = splitName(str(self.copyItem))
+            companyMsg.setText(str(detectedCompanyName))
+            self.companyGoogle = splitName(str(detectedCompanyName))
 
 
 
@@ -844,6 +859,23 @@ class MainWindow(QMainWindow):
                 # print('this is copy item' + self.copyItem)
                 print(data.loc[count, user_info["targetfirmcolid"]])
         else:
+            global detectedCompanyName
+            companyNameDetect = data.loc[count, realCompanyColumn]
+            global increment
+            increment = 0
+            while type(companyNameDetect) != str:
+                increment += 1
+                #backcount = count - increment
+                #companyNameDetector = data.loc[backcount, realCompanyColumn]
+                # if count-increment < 0:
+                #     companyNameDetect = data.loc[count - increment, realCompanyColumn]
+                # else:
+                companyNameDetect = data.loc[count - increment, realCompanyColumn]
+                if type(companyNameDetect) == str:
+                    detectedCompanyName = companyNameDetect
+                    print(detectedCompanyName)
+            self.copyItem = detectedCompanyName
+            pyperclip.copy(' ' + self.copyItem)
             print("No copy")
 
         # try:
@@ -949,11 +981,12 @@ class MainWindow(QMainWindow):
         self.btn.clicked.connect(_getData)
         self.btn.clicked.connect(_prepExcel)
         self.btn.clicked.connect(_prepData)
+        self.btn.clicked.connect(self.startSearch)
         self.btn.clicked.connect(self.nameStatus)
         self.btn.clicked.connect(self.companyNameStatus)
         self.btn.clicked.connect(self.job)
         self.btn.clicked.connect(self.counter)
-        self.btn.clicked.connect(self.startSearch)
+
 
         self.google.clicked.connect(self.googleSearch)
         self.backbtn.clicked.connect(self.goback)
@@ -979,7 +1012,7 @@ def main():
     window.setFixedSize(300, 360)
     app.exec()
 
-
+getConfigInfo()
 #getConfigData()
 getFileName()
 _getData()
