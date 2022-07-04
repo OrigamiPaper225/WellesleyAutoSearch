@@ -732,21 +732,21 @@ class MainWindow(QMainWindow):
         #     print('Empty cell, skip to next')
 
     def companyNameStatus(self):
-        try:
-            def splitName(cell):
-                newCell = cell.split()
-                print(newCell)
-                separator = '+'
-                joined = separator.join(newCell)
-                print(joined)
-                return cell
-            self.companyBefore = companyName
-            companyMsg.setText(companyName)
-            self.companyGoogle = splitName(companyName)
+        # try:
+        def splitName(cell):
+            newCell = cell.split()
+            print(newCell)
+            separator = '+'
+            joined = separator.join(newCell)
+            print(joined)
+            return cell
+        #self.companyBefore = companyName
+        companyMsg.setText(str(companyName))
+        self.companyGoogle = splitName(str(companyName))
 
-        except:
-            companyMsg.setText('Empty cell, skip to next')
-            print('Empty cell, skip to next')
+        # except:
+        #     companyMsg.setText('Empty cell, skip to next')
+        #     print('Empty cell, skip to next')
 
     def job(self):
         #try:
@@ -806,21 +806,30 @@ class MainWindow(QMainWindow):
         # else:
         print('Company name has been copied to your clipboard')
         global companyName
-        if type(companyName) == str:
-            self.copyItem = companyName
-            pyperclip.copy(' ' + self.copyItem)
-        else:
-            print("No copy")
         global count
         global targetfirmcolid
-        try:
-            self.copyItem = companyName
-            pyperclip.copy(' ' + self.copyItem)
-        except:
+        if type(companyName) == str:
             try:
-                pyperclip.copy(' ' + str(data.loc[count - 1, targetfirmcolid]))
+                self.copyItem = companyName
+                pyperclip.copy(' ' + self.copyItem)
+                print(self.copyItem)
             except:
-                pyperclip.copy(' ' + str(data.loc[count, targetfirmcolid]))
+                # try:
+                #     pyperclip.copy(' ' + str(data.loc[count - 1, targetCompanyColumn.text()]))
+                #     # print('this is copy item' + self.copyItem)
+                #     print(data.loc[count, targetCompanyColumn.text()])
+                # except:
+                pyperclip.copy(' ' + str(data.loc[count, targetCompanyColumn.text()]))
+                # print('this is copy item' + self.copyItem)
+                print(data.loc[count, targetCompanyColumn.text()])
+        else:
+            print("No copy")
+
+        # try:
+        #     self.copyItem = companyName
+        #     pyperclip.copy(' ' + self.copyItem)
+        #     #print('this is copy item' + self.copyItem)
+
         count += 1
         print(count)
         iterate()
