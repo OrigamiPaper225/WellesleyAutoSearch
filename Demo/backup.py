@@ -868,8 +868,8 @@ class MainWindow(QMainWindow):
         #global newCompanyNameCol
         self.updateNewCompanyTargetCell = newfirmcol + str(count + 1)
         # sheet_obj[companyVar].value = copyItem
-        self.font = Font(color="FF0000")
-        sheet_obj[self.updateNewCompanyTargetCell].font = self.font
+        #self.font = Font(color="FF0000")
+        #sheet_obj[self.updateNewCompanyTargetCell].font = self.font
         sheet_obj[self.updateNewCompanyTargetCell].value = newCompanyName
         #sheet_obj[AnotherWindow.companyTopVar].value = 'New Company'
         global wb
