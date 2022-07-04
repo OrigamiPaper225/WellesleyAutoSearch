@@ -934,7 +934,7 @@ class MainWindow(QMainWindow):
         title = jobMsg.text()
         self.updateNewTitleTargetCell = newtitlecol + str(count + 1)
         print(self.updateNewTitleTargetCell)
-        sheet_obj[self.updateNewTitleTargetCell].font = self.font
+        #sheet_obj[self.updateNewTitleTargetCell].font = self.font
         sheet_obj[self.updateNewTitleTargetCell].value = title
         #sheet_obj[self.updateNewTitleTargetCell].value = 'New Title'
         wb.save(filepath)
