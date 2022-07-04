@@ -455,9 +455,13 @@ class AnotherWindow(QWidget):
         sheet_obj[titleTopVar].value = 'New Title'
 
     def _askForNewFile(self):
-        global filepath
-        filepath = askopenfilename()
-        print(filepath)
+        try:
+            global filepath
+            filepath = askopenfilename()
+            print(filepath)
+        except:
+            filepath = './Example Excel (completely random profiles).xlsx'
+            print('Bad filepath')
 
     def _connectSignals(self):
         """Connect signals and slots."""
