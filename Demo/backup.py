@@ -144,7 +144,11 @@ def _prepData():
         print(title)
     except:
         print('Title has a problem')
-        title = data.loc[:, 'Title']
+        try:
+            title = data.loc[:, 'Title']
+        except:
+            title = data.loc[:, 'Position']
+
     #     statusLabel.setText('Status: Please check Title')
     # except:
     #     print('Please re-enter the Name, Company, or Title column')
@@ -819,9 +823,9 @@ class MainWindow(QMainWindow):
                 #     # print('this is copy item' + self.copyItem)
                 #     print(data.loc[count, targetCompanyColumn.text()])
                 # except:
-                pyperclip.copy(' ' + str(data.loc[count, targetCompanyColumn.text()]))
+                pyperclip.copy(' ' + str(data.loc[count, user_info["targetfirmcolid"]]))
                 # print('this is copy item' + self.copyItem)
-                print(data.loc[count, targetCompanyColumn.text()])
+                print(data.loc[count, user_info["targetfirmcolid"]])
         else:
             print("No copy")
 
