@@ -1023,7 +1023,7 @@ def main():
     window = MainWindow()
     window.show()
     window.setWindowTitle('Wellesley LinkedIn Searcher')
-    window.setFixedSize(230, 300)
+    window.setFixedSize(300, 300)
     app.exec()
 
 getConfigInfo()
