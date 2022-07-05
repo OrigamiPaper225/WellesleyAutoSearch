@@ -10,6 +10,7 @@ import webbrowser
 # import itertools
 import pyperclip
 import openpyxl
+import PyQt5
 from openpyxl import load_workbook
 from openpyxl.styles import Font
 # from selenium import webdriver
@@ -20,6 +21,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QWidget
+
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
@@ -39,7 +41,10 @@ from tkinter import filedialog as fd
 from tkinter.filedialog import askopenfilename
 from tkinter import Tk
 Tk().withdraw()
-
+if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+    PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
+    PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 def getConfigInfo():
     global config_obj
     global configpath
@@ -257,35 +262,35 @@ class AnotherWindow(QWidget):
         selectFile = QPushButton('Select Excel File')
         selectFile.setStyleSheet("background-color: #EEF3F8;"
                                        "border-radius: 6px;")
-        selectFile.setFont(QFont('Arial', 10))
+        selectFile.setFont(QFont('Arial', 12))
         global targetNameColumn
         targetNameColumn = QLineEdit(user_info["targetnamecolid"])
-        targetNameColumn.setFont(QFont('Arial', 10))
+        targetNameColumn.setFont(QFont('Arial', 12))
         targetNameColumn.setStyleSheet("background-color: #EEF3F8;"
                                        "border-radius: 6px;")
         global targetCompanyColumn
         targetCompanyColumn = QLineEdit(user_info["targetfirmcolid"])
-        targetCompanyColumn.setFont(QFont('Arial', 10))
+        targetCompanyColumn.setFont(QFont('Arial', 12))
         targetCompanyColumn.setStyleSheet("background-color: #EEF3F8;"
                                        "border-radius: 6px;")
         global targetTitleColumn
         targetTitleColumn = QLineEdit(user_info["targettitlecolid"])
-        targetTitleColumn.setFont(QFont('Arial', 10))
+        targetTitleColumn.setFont(QFont('Arial', 12))
         targetTitleColumn.setStyleSheet("background-color: #EEF3F8;"
                                        "border-radius: 6px;")
         global newCompanyNameColumn
         newCompanyNameColumn = QLineEdit(user_info["newfirmcol"])
-        newCompanyNameColumn.setFont(QFont('Arial', 10))
+        newCompanyNameColumn.setFont(QFont('Arial', 12))
         newCompanyNameColumn.setStyleSheet("background-color: #EEF3F8;"
                                        "border-radius: 6px;")
         global newTitleColumn
         newTitleColumn = QLineEdit(user_info["newtitlecol"])
-        newTitleColumn.setFont(QFont('Arial', 10))
+        newTitleColumn.setFont(QFont('Arial', 12))
         newTitleColumn.setStyleSheet("background-color: #EEF3F8;"
                                            "border-radius: 6px;")
         global startAt
         startAt = QLineEdit(user_info["countsaved"])
-        startAt.setFont(QFont('Arial', 10))
+        startAt.setFont(QFont('Arial', 12))
         startAt.setStyleSheet("background-color: #EEF3F8;"
                                      "border-radius: 6px;")
         startAt.setFocus()
@@ -299,7 +304,7 @@ class AnotherWindow(QWidget):
         startAt.setFixedSize(int(self.lineEditWidth/2), self.lineEditHeight)
         global fileNameLabel
         fileNameLabel = QLabel('Current file:' + os.path.basename(filepath))
-        fileNameLabel.setFont(QFont('Arial', 10))
+        fileNameLabel.setFont(QFont('Arial', 12))
         fileNameLabel.setStyleSheet("color:black;font-weight: 600;")
 
         self.generalLayout.addWidget(selectFile)
@@ -310,7 +315,7 @@ class AnotherWindow(QWidget):
         self.generalLayout.addWidget(newCompanyNameColumn)
         self.generalLayout.addWidget(newTitleColumn)
         self.generalLayout.addWidget(startAt)
-        selectFile.setFont(QFont('Arial', 10))
+        selectFile.setFont(QFont('Arial', 12))
         selectFile.setStyleSheet(
             "color: white;"
             "background-color: #0A66C2;"
@@ -320,7 +325,7 @@ class AnotherWindow(QWidget):
             "border-color: #0A66C2;"
             "border-radius: 3px")
         self.savebtn = QPushButton('Save Selection')
-        self.savebtn.setFont(QFont('Arial', 10))
+        self.savebtn.setFont(QFont('Arial', 12))
         self.savebtn.setStyleSheet(
             "color: white;"
             "background-color: #0A66C2;"
@@ -344,17 +349,17 @@ class AnotherWindow(QWidget):
 
 
         self.cl1.setStyleSheet("color:black;font-weight: 600;")
-        self.cl1.setFont(QFont('Arial', 10))
+        self.cl1.setFont(QFont('Arial', 12))
         self.cl2.setStyleSheet("color:black;font-weight: 600;")
-        self.cl2.setFont(QFont('Arial', 10))
+        self.cl2.setFont(QFont('Arial', 12))
         self.cl3.setStyleSheet("color:black;font-weight: 600;")
-        self.cl3.setFont(QFont('Arial', 10))
+        self.cl3.setFont(QFont('Arial', 12))
         self.cl4.setStyleSheet("color:black;font-weight: 600;")
-        self.cl4.setFont(QFont('Arial', 10))
+        self.cl4.setFont(QFont('Arial', 12))
         self.cl5.setStyleSheet("color:black;font-weight: 600;")
-        self.cl5.setFont(QFont('Arial', 10))
+        self.cl5.setFont(QFont('Arial', 12))
         self.cl6.setStyleSheet("color:black;font-weight: 600;")
-        self.cl6.setFont(QFont('Arial', 10))
+        self.cl6.setFont(QFont('Arial', 12))
 
         self.formLayout.addRow(self.cl1, targetNameColumn)
         self.formLayout.addRow(self.cl2, targetCompanyColumn)
@@ -623,7 +628,7 @@ class MainWindow(QMainWindow):
     def _createButtons(self):
         """Create the buttons."""
         self.btn = QPushButton('LinkedIn Search')
-        self.btn.setFont(QFont('Arial', 10))
+        self.btn.setFont(QFont('Arial', 12))
         self.btn.setStyleSheet(
             "color: white;"
             "background-color: #0A66C2;"
@@ -633,11 +638,11 @@ class MainWindow(QMainWindow):
             "border-color: #0A66C2;"
             "border-radius: 3px")
         self.configbtn = QPushButton('Config')
-        self.configbtn.setFont(QFont('Arial', 10))
+        self.configbtn.setFont(QFont('Arial', 12))
         self.google = QPushButton('Search')
-        self.google.setFont(QFont('Arial', 10))
+        self.google.setFont(QFont('Arial', 12))
         self.backbtn = QPushButton('Go Back')
-        self.backbtn.setFont(QFont('Arial', 10))
+        self.backbtn.setFont(QFont('Arial', 12))
         self.backbtn.setStyleSheet(
             "padding: 2px 5px 2px 5px;"
             "color: white;"
@@ -687,28 +692,28 @@ class MainWindow(QMainWindow):
         # self.formLayout.addRow('Title Column:', self.titleColumn)
         self.startLabel = QLabel('Start Search:')
         self.startLabel.setStyleSheet("color:black;font-weight: 600;")
-        self.startLabel.setFont(QFont('Arial', 10))
+        self.startLabel.setFont(QFont('Arial', 12))
         self.formLayout.addRow(self.startLabel, self.btn)
         # self.formLayout.addRow('Start At:', self.startAt)
         self.nameLabel = QLabel('Candidate Name:')
         self.nameLabel.setStyleSheet("color:black;font-weight: 600;")
-        self.nameLabel.setFont(QFont('Arial', 10))
+        self.nameLabel.setFont(QFont('Arial', 12))
         self.formLayout.addRow(self.nameLabel, self.nameMsg)
         self.firmLabel = QLabel('Firm Name:')
         self.firmLabel.setStyleSheet("color:black;font-weight: 600;")
-        self.firmLabel.setFont(QFont('Arial', 10))
+        self.firmLabel.setFont(QFont('Arial', 12))
         self.formLayout.addRow(self.firmLabel, companyMsg)
         self.jobLabel = QLabel('Candidate Title:')
         self.jobLabel.setStyleSheet("color:black;font-weight: 600;")
-        self.jobLabel.setFont(QFont('Arial', 10))
+        self.jobLabel.setFont(QFont('Arial', 12))
         self.formLayout.addRow(self.jobLabel, jobMsg)
         self.countLabel = QLabel('Count:')
         self.countLabel.setStyleSheet("color:black;font-weight: 600;")
-        self.countLabel.setFont(QFont('Arial', 10))
+        self.countLabel.setFont(QFont('Arial', 12))
         self.formLayout.addRow(self.countLabel, self.countMsg)
         self.googleLabel = QLabel('Google Search:')
         self.googleLabel.setStyleSheet("color:black;font-weight: 600;")
-        self.googleLabel.setFont(QFont('Arial', 10))
+        self.googleLabel.setFont(QFont('Arial', 12))
         self.formLayout.addRow(self.googleLabel, self.google)
 
         #global statusLabel
@@ -718,13 +723,13 @@ class MainWindow(QMainWindow):
         #statusLabel.setStyleSheet("color:black;font-weight: 600;")
         #statusLabel.setFont(QFont('Arial', 10))
         self.TipsLabel.setStyleSheet("color:black;font-weight: 600;")
-        self.TipsLabel.setFont(QFont('Arial', 10))
+        self.TipsLabel.setFont(QFont('Arial', 12))
         #self.generalLayout.addWidget(statusLabel)
         self.generalLayout.addWidget(self.TipsLabel)
         self.generalLayout.addWidget(self.Tips2Label)
         #self.formLayout.addRow(self.TipsLabel, self.Tips2Label)
         self.Tips2Label.setStyleSheet("color:black;font-weight: 600;")
-        self.Tips2Label.setFont(QFont('Arial', 10))
+        self.Tips2Label.setFont(QFont('Arial', 12))
         # self.formLayout.addRow(, '')
 
     def closeExcel(self):
@@ -1012,7 +1017,9 @@ class MainWindow(QMainWindow):
 
 def main():
     """Main function."""
+
     app = QApplication(sys.argv)
+    app.setStyle('Fusion')
     window = MainWindow()
     window.show()
     window.setWindowTitle('Wellesley LinkedIn Searcher')
